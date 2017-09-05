@@ -21,7 +21,6 @@ function SSizeLogisticCon(p1, OR; alpha=0.05, power=0.8)
    return ceil(Int64,(za+zb)^2 / (p1*(1-p1)*β^2))
 end
 
-
 # OR = exp(β) odds ratio
 # p1 = Pr(Y = 1)
 function powerLogisticCon(n, p1, OR; alpha=0.05)
@@ -148,11 +147,7 @@ function mdpr(;n = 0, p1 = 0.0, B = 0.0, alpha = 0.05, power = 0.8)
    end
 
    # find p2 that achieves power greater than the power specified
-   for p2 = p1:0.0001:1.0
-      if powerLogisticBin(n,p1,p2,B,alpha=alpha) >= power
-         return p2
-      end
-   end
+   return fzero(x->powerLogisticBin(n,p1,p2,B,alpha=alpha) - power,p1+1e-10,1-1e-10)
 end
 
 function mdor(;n = 0, p1 = 0.0, B = 0.0, alpha = 0.05, power = 0.8)
@@ -170,11 +165,8 @@ function mdor(;n = 0, p1 = 0.0, B = 0.0, alpha = 0.05, power = 0.8)
    end
 
    # find p2 that achieves power greater than the power specified
-   for p2 = p1:0.0001:1.0
-      if powerLogisticBin(n,p1,p2,B,alpha=alpha) >= power
-         return oddsratio(p2,p1)
-      end
-   end
+   return oddsratio(fzero(x->powerLogisticBin(n,p1,p2,B,alpha=alpha) - power,p1+1e-10,1-1e-10),p1)
+
 end
 
 function oddsratio(p1,p2)
