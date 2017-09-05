@@ -1,6 +1,6 @@
 module PowerLogistic
 
-using Distributions
+using Distributions, Roots
 
 export powerLogistic, mdpr, mdor
 
@@ -148,11 +148,7 @@ function mdpr(;n = 0, p1 = 0.0, B = 0.0, alpha = 0.05, power = 0.8)
    end
 
    # find p2 that achieves power greater than the power specified
-   for p2 = p1:0.0001:1.0
-      if powerLogisticBin(n,p1,p2,B,alpha=alpha) >= power
-         return p2
-      end
-   end
+   return fzero(x->powerLogisticBin(n,p1,p2,B,alpha=alpha) - power,1e-9,1.0-1e-9)
 end
 
 function mdor(;n = 0, p1 = 0.0, B = 0.0, alpha = 0.05, power = 0.8)
@@ -170,11 +166,8 @@ function mdor(;n = 0, p1 = 0.0, B = 0.0, alpha = 0.05, power = 0.8)
    end
 
    # find p2 that achieves power greater than the power specified
-   for p2 = p1:0.0001:1.0
-      if powerLogisticBin(n,p1,p2,B,alpha=alpha) >= power
-         return oddsratio(p2,p1)
-      end
-   end
+   p2 = fzero(x->powerLogisticBin(n,p1,p2,B,alpha=alpha) - power,1e-9,1.0-1e-9)
+   return oddsratio(p2,p1)
 end
 
 function oddsratio(p1,p2)
