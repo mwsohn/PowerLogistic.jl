@@ -195,11 +195,11 @@ function plotmdor(; nvec::Vector = [], p1::Union{Float64,Vector} = 0.0, B::Union
    # plot
    for i = 1:len
       if i == 1
-         plot(nvec,orvec[i],label = string("p1 = ",p1[i]))
+         plot(nvec,orvec[i,:],label = string("p1 = ",p1[i]))
       elseif i < len
-         plot!(nvec,orvec[i],label = string("p1 = ",p1[i]))
+         plot!(nvec,orvec[i,:],label = string("p1 = ",p1[i]))
       else
-         plot!(nvec,orvec[len],label = string("p1 = ",p1[i]),
+         plot!(nvec,orvec[len,:],label = string("p1 = ",p1[i]),
             marker=(2,.5,:circle,:blue),
             left_margin = 8mm,
             title = "Minimum Detectable Odds Ratio",
