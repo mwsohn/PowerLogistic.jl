@@ -193,24 +193,37 @@ function plotmdor(; nvec::Vector = [], p1::Union{Float64,Vector} = 0.0, B::Union
    orvec = orvec'
 
    # plot
-   for i = 1:len
-      if i == 1
-         plot(nvec,orvec[i,:],label = string("p1 = ",p1[i]))
-      elseif i < len
-         plot!(nvec,orvec[i,:],label = string("p1 = ",p1[i]))
-      else
-         plot!(nvec,orvec[len,:],label = string("p1 = ",p1[i]),
-            marker=(2,.5,:circle,:blue),
+   nlines = length(p1)
+
+   # plot
+   if nlines == 1
+      plot(nvec,orvec[:,1],
+         marker=(2,.5,:circle,:blue),
+         left_margin = 8mm,
+         title = "Minimum Detectable Odds Ratio",
+         ylabel = "Odds Ratio",
+         xlabel = "Sample Size",
+         ylims=(1-0.1,maximum(orvec)+0.1),
+         xlims=(-xlim_lower,nvec[len]+xlim_lower),
+         label=false,
+         legend = false
+      )
+   else
+      plot(nvec,orvec[:,1],label = string("p1 = ",p1[1]),marker=(2,.5,:circle))
+      for i=2:(nlines-1)
+         plot!(nvec,orvec[:,i],label = string("p1 = ",p1[i]),marker=(2,.5,:circle))
+      end
+      plot!(nvec,orvec[:,nlines],
+            label = string("p1 = ",p1[nlines]),
+            marker=(2,.5,:circle),
             left_margin = 8mm,
             title = "Minimum Detectable Odds Ratio",
             ylabel = "Odds Ratio",
             xlabel = "Sample Size",
             ylims=(1-0.1,maximum(orvec)+0.1),
-            xlims=(-xlim_lower,nvec[len]+xlim_lower),
-            label=false)
-      end
-   end
-
+            xlims=(-xlim_lower,nvec[len]+xlim_lower)
+         )
+    end
 end
 
 end
