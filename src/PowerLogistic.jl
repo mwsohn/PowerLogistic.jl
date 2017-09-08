@@ -2,7 +2,7 @@ module PowerLogistic
 
 using Distributions, Roots, Plots
 
-export powerLogistic, mdpr, mdor
+export powerLogistic, mdpr, mdor, plotmdor
 
 # power for simple logistic regression based on
 # http://personal.health.usf.edu/ywu/logistic.pdf
@@ -183,13 +183,14 @@ function plotmdor(; nvec::Vector = [], p1::Union{Float64,Vector} = 0.0, B::Union
    orvec = Array{Float64,2}(length(p1),len)
 
    for (i,p) in enumerate(p1)
-      orvec[:,i] = [mdor(n = x, p1 = p, B = B, alpha = alpha, power = power) for x in nvec]
+      orvec[i,:] = [mdor(n = x, p1 = p, B = B, alpha = alpha, power = power) for x in nvec]
    end
 
    # plotly
    plotly()
 
    xlim_lower = nvec[len] / 40
+   orvec = orvec'
 
    # plot
    for i = 1:len
