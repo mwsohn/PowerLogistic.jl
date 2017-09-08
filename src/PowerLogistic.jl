@@ -1,6 +1,6 @@
 module PowerLogistic
 
-using Distributions, Roots
+using Distributions, Roots, Plots
 
 export powerLogistic, mdpr, mdor
 
@@ -171,6 +171,43 @@ end
 
 function oddsratio(p1,p2)
    return (p1/(1-p1))/(p2/(1-p2))
+end
+
+function plotmdor(; nvec::Vector = [], p1::Union{Float64,Vector} = 0.0, B::Union{Float64,Vector} = 0.0, alpha = 0.05, power = 0.8)
+
+   len = length(nvec)
+   if len < 2
+      error("`nvec` must have 2 or more values for sample size")
+   end
+
+   orvec = Array{Float64,2}(length(p1),len)
+
+   for (i,p) in enumerate(p1)
+      orvec[:,i] = [mdor(n = x, p1 = p, B = B, alpha = alpha, power = power) for x in nvec]
+   end
+
+   # plotly
+   plotly()
+
+   xlim_lower = nvec[len] / 40
+
+   # plot
+   for i = 1:len
+      if i < len
+         plot(nvec,orvec[i],label = string("p1 = ",p1[i]))
+      else
+         plot!(nvec,orvec[len],label = string("p1 = ",p1[i]),
+            marker=(2,.5,:circle,:blue),
+            left_margin = 8mm,
+            title = "Minimum Detectable Odds Ratio",
+            ylabel = "Odds Ratio",
+            xlabel = "Sample Size",
+            ylims=(1-0.1,maximum(orvec)+0.1),
+            xlims=(-xlim_lower,nvec[len]+xlim_lower),
+            label=false)
+      end
+   end
+
 end
 
 end
